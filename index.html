@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 EDMAN NEXUS — CYBER AI UNIVERSE</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #030712;
+            color: #22c55e;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        canvas#matrix {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.18;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(3, 7, 18, 0.9);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .brand {
+            font-size: 16px;
+            font-weight: bold;
+            color: #22c55e;
+            text-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .brand-sub { font-size: 9px; color: #94a3b8; letter-spacing: 2px; }
+        .stats-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .badge {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #22c55e;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.2);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+        .welcome-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #22c55e;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.2);
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .welcome-card h2 { color: #facc15; font-size: 22px; margin-bottom: 5px; text-shadow: 0 0 10px rgba(250,204,21,0.4); }
+        .welcome-card p { color: #94a3b8; font-size: 12px; }
+
+        /* الأقسام الأربعة */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .section-card:hover, .section-card.active {
+            border-color: #22c55e;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+            background: rgba(22, 101, 52, 0.15);
+        }
+        .section-card h3 { color: #22c55e; font-size: 14px; margin-bottom: 5px; }
+        .section-card span { color: #94a3b8; font-size: 10px; }
+
+        /* صندوق المحادثة */
+        .chat-box {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #22c55e;
+            border-radius: 12px;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(34,197,94,0.15);
+        }
+        .chat-header {
+            background: #0f172a;
+            padding: 12px 15px;
+            border-bottom: 1px solid #22c55e;
+            font-size: 13px;
+            font-weight: bold;
+            color: #facc15;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .message.user {
+            background: #166534;
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-right-radius: 2px;
+        }
+        .message.ai {
+            background: #0f172a;
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            align-self: flex-end;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background: #0f172a;
+            border-top: 1px solid #1e293b;
+        }
+        .chat-input-area input {
+            flex: 1;
+            background: #030712;
+            border: 1px solid #1e293b;
+            color: #22c55e;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .chat-input-area input:focus { border-color: #22c55e; }
+        .chat-input-area button {
+            background: #22c55e;
+            color: #030712;
+            border: none;
+            padding: 0 18px;
+            margin-right: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-input-area button:hover { background: #16a34a; }
+        .footer-status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <div class="header">
+        <div>
+            <div class="brand">👑 EDMAN NEXUS</div>
+            <div class="brand-sub">CYBERSECURITY UNIVERSE</div>
+        </div>
+        <div class="stats-bar">
+            <div class="badge">1 LVL 🏆</div>
+            <div class="badge">150 XP ⭐</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2>WELCOME HAKER</h2>
+            <p>اختر القسم المطلوب وابدأ التفاعل مع العقل الذكي لإدمان...</p>
+        </div>
+
+        <!-- الأقسام الأربعة -->
+        <div class="sections-grid">
+            <div class="section-card active" onclick="switchSection('general', this)">
+                <h3>🤖 الشات العادي</h3>
+                <span>مساعد ذكي عام</span>
+            </div>
+            <div class="section-card" onclick="switchSection('hacker', this)">
+                <h3>💀 قسم الهاكر</h3>
+                <span>تحليل وأدوات سيبرانية</span>
+            </div>
+            <div class="section-card" onclick="switchSection('mentor', this)">
+                <h3>🎯 معلم الهاكر</h3>
+                <span>دروس واحتراف البرمجة</span>
+            </div>
+            <div class="section-card" onclick="switchSection('mission', this)">
+                <h3>⚡ محاكي العمليات</h3>
+                <span>أوامر واستعراض سيبراني</span>
+            </div>
+        </div>
+
+        <!-- صندوق المحادثة المتطور -->
+        <div class="chat-box">
+            <div class="chat-header">
+                <span id="chatTitle">🤖 الشات العادي (General AI)</span>
+                <span style="color: #22c55e; font-size: 10px;">● ONLINE</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">أهلاً بك يا سيدي في نظام EDMAN NEXUS. كيف يمكنني مساعدتك اليوم في تدمير المنافسين وكسر الغرور؟</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">إرسال</button>
+            </div>
+        </div>
+
+        <div class="footer-status">v1.0.0 — SECURE C2 AI ENGINE © 2026</div>
+    </div>
+
+    <script>
+        // خلفية الماتريكس
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const alphabet = '0123456789ABCDEFHIJKLMNOPQRSTUVWXYZ@#$%&*+-/\\';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const rainDrops = [];
+        for (let x = 0; x < columns; x++) { rainDrops[x] = 1; }
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(3, 7, 18, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#22c55e';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) { rainDrops[i] = 0; }
+                rainDrops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        // إدارة الأقسام
+        let currentSection = 'general';
+        function switchSection(sec, element) {
+            document.querySelectorAll('.section-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            currentSection = sec;
+            
+            let titles = {
+                'general': '🤖 الشات العادي (General AI)',
+                'hacker': '💀 قسم الهاكر (Hacker AI)',
+                'mentor': '🎯 معلم الهاكر (Hacker Mentor)',
+                'mission': '⚡ محاكي العمليات (Mission Control)'
+            };
+            document.getElementById('chatTitle').innerText = titles[sec];
+            
+            let greetings = {
+                'general': 'أهلاً بك في الشات العام. اطرح أي سؤال وسأجيبك فوراً.',
+                'hacker': 'مرحباً بك في قسم الهاكر السيبراني. جاهز لأي كود أو تحليل ثغرات.',
+                'mentor': 'معلم الهاكر معك. اطلب الدرس أو المفهوم البرمجي الذي تريد إتقانه.',
+                'mission': 'محاكي العمليات متصل. اكتب أمرك لنبدأ المحاكاة الفورية.'
+            };
+            
+            let box = document.getElementById('chatMessages');
+            box.innerHTML += `<div class="message ai">${greetings[sec]}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // إرسال الرسائل والمحاكاة الذكية
+        function sendMessage() {
+            let input = document.getElementById('userInput');
+            let text = input.value.trim();
+            if (!text) return;
+
+            let box = document.getElementById('chatMessages');
+            box.innerHTML += `<div class="message user">${text}</div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "تم استقبال طلبك بنجاح وتحليله عبر أنظمة إدمان السيبرانية. جارٍ تنفيذ المعالجة المطلوبة بدقة تامة...";
+                if (currentSection === 'hacker') {
+                    reply = `[!] Analyzing Target... Success! تم فحص الثغرة واستخراج البيانات بنجاح لـ: "${text}"`;
+                } else if (currentSection === 'mentor') {
+                    reply = `[💡 درس برمجياً] لتعلم هذا المجال بقوة، عليك بفهم البنيات البرمجية العميقة وعدم الاكتفاء بالقشور يا سيدي.`;
+                } else if (currentSection === 'mission') {
+                    reply = `[⚡ EXECUTE] تنفيذ الأمر (${text}) على البيئة الافتراضية... النتيجة: [تم بنجاح تام وسحق المنافسين]`;
+                }
+                box.innerHTML += `<div class="message ai">${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
